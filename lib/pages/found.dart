@@ -39,7 +39,6 @@ class _FoundScreenState extends State<FoundScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-
                 ListView.builder(
                   physics: BouncingScrollPhysics(),
                      shrinkWrap: true,

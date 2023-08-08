@@ -1,57 +1,41 @@
-
-
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-
-
 class LostScreen extends StatefulWidget {
-  const LostScreen({Key? key}) : super(key: key);
+  const LostScreen({super.key});
 
   @override
-  State<LostScreen> createState() => _HumaState();
+  State<LostScreen> createState() => _LostScreenState();
 }
 
-class _HumaState extends State<LostScreen> {
-  @override
+class _LostScreenState extends State<LostScreen> {
+  final Stream<QuerySnapshot> lost_itemStream = FirebaseFirestore.instance.collection('lost_item').snapshots();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text("Lost Dashboard"),
-        ),
-        body:   Column(children: [
-             Card(
-               child: Row(
-                 children: [
-                   Expanded(
-                       child: Container(
-                         height: 200,
-                         width: 200,
-                         decoration: BoxDecoration(
-                             color: Colors.grey,
-                             borderRadius: BorderRadius.circular(20)
-                         ),
-                         child: Image.asset("images/img.png",width: 180,height: 180,),
-
-                       )),
-
-
-                   Expanded(child: Column(children: [
-
-                     Text("Product Name"),
-                     Text("category"),
-                     Text("Description"),
-                     Text("Time"),
-
-                   ],))
-                 ],
-               ),
-             )
-
-
-        ],)
+      body: StreamBuilder<QuerySnapshot>(
+        stream: lost_itemStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("Loading");
+          }
+          return ListView(
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              return ListTile(
+                title: Text(data['item_name']),
+                subtitle: Text(data['item_category']),
+              );
+            }).toList(),
+          );
+        },
+      )
     );
   }
 }
+
+
+

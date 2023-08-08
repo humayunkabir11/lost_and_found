@@ -1,8 +1,11 @@
 
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lost_and_found/auth/sign_in.dart';
+import 'package:lost_and_found/pages/add.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -12,11 +15,49 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateMixin{
-  late TextEditingController _nameController = TextEditingController(text: '');
-  late TextEditingController _numberController = TextEditingController(text: '');
-  late TextEditingController _emailController = TextEditingController(text: '');
-  late TextEditingController _passWordController = TextEditingController(text: '');
-  late TextEditingController _degingnationController = TextEditingController(text: '');
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passWordController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+
+  final auth = FirebaseAuth.instance;
+
+  void registerUser({required String email, required String password}) async {
+
+    if(globalKeyForm.currentState!.validate()) {
+      await auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password
+      ).then((value) => {
+        postDetailsToFireStore()
+      }).catchError((e){
+       print(e);
+      });
+    }
+  }
+
+  postDetailsToFireStore() async{
+
+    FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
+
+    User? user = auth.currentUser;
+    UserModel userModel = UserModel();
+
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.name = _nameController.text.toString();
+    userModel.phoneNumber = _numberController.text.toString();
+    userModel.address = _addressController.text.toString();
+
+    await firebaseFireStore.collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+
+    Navigator.push(context, MaterialPageRoute(builder: (_) => AddScreen()));
+  }
+
   final globalKeyForm = GlobalKey<FormState>();
   bool _obscureText = true;
   final ImagePicker _picker = ImagePicker();
@@ -51,15 +92,10 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     setState(() {
     });
   }
-  
-  @override
 
-  void _formValidKey(){
-    final isValid = globalKeyForm.currentState!.validate();
-    print('valid $isValid');
-  }
   @override
-  Widget build(BuildContext con) {
+  Widget build(BuildContext context) {
+
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.white,
@@ -94,17 +130,17 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                               return 'please give right input';
                             }
                           },
-                          style: const TextStyle(color: Colors.lightGreenAccent),
+                          style: const TextStyle(color: Colors.black),
                           controller: _nameController,
                           keyboardType: TextInputType.name,
                           decoration: const InputDecoration(
                             hintText: 'Your Name',
-                            hintStyle: TextStyle(color: Colors.redAccent,fontSize: 15),
+                            hintStyle: TextStyle(color: Colors.black,fontSize: 15),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.green),
                             ),
                             errorBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.red)
+                                borderSide: BorderSide(color: Colors.black)
 
                             ),
                             focusColor: Colors.white,
@@ -118,12 +154,12 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                               return 'please give right input';
                             }
                           },
-                          style: const TextStyle(color: Colors.lightGreenAccent),
+                          style: const TextStyle(color: Colors.black),
                           controller: _numberController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             hintText: 'Your Number',
-                            hintStyle: TextStyle(color: Colors.redAccent,fontSize: 15),
+                            hintStyle: TextStyle(color: Colors.black,fontSize: 15),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.green),
                             ),
@@ -140,16 +176,16 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         const SizedBox(height: 7,),
                         TextFormField(
                           validator: (value){
-                            if(value!.isEmpty||value.contains('@')){
+                            if(value!.isEmpty){
                               return 'please valid value';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
-                          style:const TextStyle(color: Colors.lightGreenAccent,fontSize: 15),
+                          style:const TextStyle(color: Colors.black,fontSize: 15),
                           decoration: const InputDecoration(
                               hintText: 'Email',
-                              hintStyle: TextStyle(color: Colors.redAccent,fontSize: 15),
+                              hintStyle: TextStyle(color: Colors.black,fontSize: 15),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.green
@@ -167,13 +203,13 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         TextFormField(
                           obscureText: _obscureText,
                           validator: (value){
-                            if(value!.isEmpty||value.length<10){
+                            if(value!.isEmpty||value.length<6){
                               return 'please valid value';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
                           controller: _passWordController,
-                          style:const TextStyle(color: Colors.lightGreenAccent,fontSize: 15),
+                          style:const TextStyle(color: Colors.black,fontSize: 15),
                           decoration: InputDecoration(
                               hintText: 'password',
                               suffixIcon: IconButton(onPressed: (){
@@ -185,7 +221,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                                   _obscureText?Icons.visibility_off:Icons.visibility,color: Colors.green,
                                 ),
                               ),
-                              hintStyle: const TextStyle(color: Colors.red,fontSize: 15),
+                              hintStyle: const TextStyle(color: Colors.black,fontSize: 15),
                               enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.green
@@ -207,11 +243,11 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
-                          controller: _degingnationController,
-                          style:const TextStyle(color: Colors.lightGreenAccent,fontSize: 15),
+                          controller: _addressController,
+                          style:const TextStyle(color: Colors.black,fontSize: 15),
                           decoration: const InputDecoration(
-                              hintText: 'Adress',
-                              hintStyle: TextStyle(color: Colors.red,fontSize: 15),
+                              hintText: 'Address',
+                              hintStyle: TextStyle(color: Colors.black,fontSize: 15),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.green
@@ -231,7 +267,10 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                               child: Center(child: Text("upload picture")),
                               height: 100,
                               width: 100,
-                              color: Colors.green,
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(20)
+                              ),
                             ):
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
@@ -245,19 +284,18 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                             IconButton(onPressed: ()=>fromCamera(), icon: Icon(Icons.photo_album_outlined))
                           ],),
                         MaterialButton(onPressed: (){
-                          _formValidKey();
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>LogIn()));
+                          registerUser(email: _emailController.text, password: _passWordController.text);
 
                         },
                           color: Colors.red,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(15.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.login,color: Colors.green,),
-                                const SizedBox(width: 6,),
-                                const Text('SignUp',style: TextStyle(color: Colors.green,fontSize: 15),)
+                                Icon(Icons.login,color: Colors.green,),
+                                SizedBox(width: 6,),
+                                Text('SignUp',style: TextStyle(color: Colors.green,fontSize: 15),)
                               ],
                             ),
                           ),
@@ -266,12 +304,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         RichText(
                           text: const TextSpan(
                               children: [
-                                TextSpan(text: 'Already Hava an Account?    ',style: TextStyle
+                                TextSpan(text: 'Already Hava an Account',style: TextStyle
                                   (color: Colors.redAccent,fontWeight: FontWeight.bold,fontSize: 20),),
-                                TextSpan(
-                                    text: 'SignIn',style: TextStyle
-                                  (color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20)
-                                ),
 
                               ]
                           ),
@@ -280,8 +314,6 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                     ),
                   ),
 
-
-
                 ],
               ),
             )
@@ -289,6 +321,43 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
         )
 
     );
+  }
+}
+
+class UserModel{
+
+  String? uid;
+  String? name;
+  String? phoneNumber;
+  String? email;
+  String? address;
+
+  UserModel({this.uid, this.name, this.phoneNumber, this.email, this.address});
+
+  // receive data from server
+  factory UserModel.fromMap(map)
+  {
+    return UserModel(
+
+        uid: map['uid'],
+        name: map['name'],
+        phoneNumber: map['phoneNumber'],
+        email: map['email'],
+        address: map['address']
+    );
+  }
+
+  // sending data to server
+  Map<String, dynamic> toMap()
+  {
+    return {
+
+      'uid': uid,
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'address': address,
+    };
   }
 }
 

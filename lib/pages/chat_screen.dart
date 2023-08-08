@@ -10,10 +10,15 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return  SafeArea(
       child: Scaffold(
 
-        body: Column(
+        appBar: AppBar(
+          title: const Text("Chating"),
+          centerTitle: true,
+        ),
+
+        body: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
            SizedBox(

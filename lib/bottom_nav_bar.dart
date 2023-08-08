@@ -15,16 +15,15 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
    final pages = [
-
-     const LostScreen(),
-     const FoundScreen(),
-       AddScreen(),
-     const ChatScreen(),
-     ProfileScreen()
+     LostScreen(),
+      FoundScreen(),
+      AddScreen(),
+      ChatScreen(),
+      ProfileScreen()
 
   ];
 
-  int _currentIndex = 0;
+  int _currentIndex = 2;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lost_and_found/auth/sign_in.dart';
+import 'package:lost_and_found/pages/chat_screen.dart';
+import 'package:lost_and_found/pages/itemscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         ),
 
-        endDrawer: const Drawer(
+        endDrawer:  Drawer(
 
           elevation: 2,
           width: 220,
@@ -37,63 +40,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 20,),
                 SizedBox(
                   height: 70,
-                  child: Card(
-                    elevation: 10,
-                    shadowColor: Colors.black,
-
-                    child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.person),
-                        Text("Profile")
-                      ],
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen()));
+                    },
+                    child: Card(
+                      elevation: 10,
+                      shadowColor: Colors.black,
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.person),
+                          Text("Profile")
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 70,
-                  child: Card(
-                    elevation: 10,
-                    shadowColor: Colors.black,
-
-                    child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-
-                        Icon(Icons.interpreter_mode_sharp),
-                        Text("My Items")
-                      ],
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>MyItems()));
+                    },
+                    child: Card(
+                      elevation: 10,
+                      shadowColor: Colors.black,
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.interpreter_mode_sharp),
+                          Text("My Items")
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 70,
-                  child: Card(
-                    elevation: 10,
-                    shadowColor: Colors.black,
-
-                    child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-
-                        Icon(Icons.chat),
-                        Text("Chatting")
-                      ],
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen()));
+                    },
+                    child: Card(
+                      elevation: 10,
+                      shadowColor: Colors.black,
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.chat),
+                          Text("Chatting")
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 70,
-                  child: Card(
-                    elevation: 10,
-                    shadowColor: Colors.black,
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>LogIn()));
+                    },
+                    child: Card(
+                      elevation: 10,
+                      shadowColor: Colors.black,
 
-                    child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.logout),
-                        Text("Log Out")
-                      ],
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.logout),
+                          Text("Log Out")
+                        ],
+                      ),
                     ),
                   ),
                 ),

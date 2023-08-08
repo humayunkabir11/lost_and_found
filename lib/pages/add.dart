@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lost_and_found/pages/found.dart';
+import 'package:lost_and_found/pages/lost.dart';
 
 class AddScreen extends StatefulWidget {
   @override
@@ -9,8 +12,49 @@ class AddScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<AddScreen> {
+
   final lostKey = GlobalKey<FormState>();
   final foundKey = GlobalKey<FormState>();
+
+  final TextEditingController itemNameController = TextEditingController();
+  final TextEditingController itemCategoryController = TextEditingController();
+  final TextEditingController itemDescriptionController = TextEditingController();
+
+
+  final TextEditingController foundItemNameController = TextEditingController();
+  final TextEditingController foundItemCategoryController = TextEditingController();
+  final TextEditingController foundItemDescriptionController = TextEditingController();
+
+  CollectionReference lostItem = FirebaseFirestore.instance.collection('lost_item');
+  CollectionReference foundItem = FirebaseFirestore.instance.collection('found_item');
+
+  Future<void> addLostItem() {
+    // Call the user's CollectionReference to add a new user
+    return lostItem.add({
+      'item_name': itemNameController.text.toString(), // John Doe
+      'item_category': itemCategoryController.text.toString(), // Stokes and Sons
+      'item_description': itemDescriptionController.text.toString(),
+    })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  Future<void> addFoundItem() {
+    // Call the user's CollectionReference to add a new user
+    return foundItem
+        .add({
+      'item_name': foundItemNameController.text.toString(), // John Doe
+      'item_category': foundItemCategoryController.text.toString(), // Stokes and Sons
+      'item_description': foundItemDescriptionController.text.toString(),
+      'lost_item_id' : foundItem.id
+    })
+
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -47,7 +91,7 @@ class _ChatScreenState extends State<AddScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0, right: 20),
                         child: Form(
-                          key: foundKey,
+                          key: lostKey,
                           child: Column(
                             children: [
                               TextFormField(
@@ -57,13 +101,13 @@ class _ChatScreenState extends State<AddScreen> {
                                   }
                                 },
                                 style: const TextStyle(
-                                    color: Colors.lightGreenAccent),
-                                controller: _nameController,
+                                    color: Colors.black),
+                                controller: itemNameController,
                                 keyboardType: TextInputType.name,
                                 decoration: const InputDecoration(
                                   hintText: 'Enter Your Item Name',
                                   hintStyle: TextStyle(
-                                      color: Colors.redAccent, fontSize: 15),
+                                      color: Colors.black, fontSize: 15),
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.green),
                                   ),
@@ -80,13 +124,13 @@ class _ChatScreenState extends State<AddScreen> {
                                   }
                                 },
                                 keyboardType: TextInputType.emailAddress,
-                                controller: _desingnationController,
+                                controller: itemCategoryController,
                                 style: const TextStyle(
-                                    color: Colors.lightGreenAccent, fontSize: 15),
+                                    color: Colors.black, fontSize: 15),
                                 decoration: const InputDecoration(
                                     hintText: 'Enter the item category',
                                     hintStyle: TextStyle(
-                                        color: Colors.red, fontSize: 15),
+                                        color: Colors.black, fontSize: 15),
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(color: Colors.green),
                                     ),
@@ -103,13 +147,13 @@ class _ChatScreenState extends State<AddScreen> {
                                   }
                                 },
                                 style: const TextStyle(
-                                    color: Colors.lightGreenAccent),
-                                controller: _nameController,
+                                    color: Colors.black),
+                                controller: itemDescriptionController,
                                 keyboardType: TextInputType.name,
                                 decoration: const InputDecoration(
                                   hintText: 'Inter Description',
                                   hintStyle: TextStyle(
-                                      color: Colors.redAccent, fontSize: 15),
+                                      color: Colors.black, fontSize: 15),
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.green),
                                   ),
@@ -151,12 +195,15 @@ class _ChatScreenState extends State<AddScreen> {
                                   ),
                                   IconButton(
                                       onPressed: () => fromCamera(),
-                                      icon: Icon(Icons.photo_album_outlined))
+                                      icon: const Icon(Icons.photo_album_outlined))
                                 ],
                               ),
                               MaterialButton(
                                 onPressed: () {
-                                  _foundValidKey();
+                                  if(lostKey.currentState!.validate()){
+                                    addLostItem();
+                                    Navigator.push(context, MaterialPageRoute(builder: (_)=>  LostScreen() ));
+                                  }
                                 },
                                 color: Colors.red,
                                 child: const Padding(
@@ -212,13 +259,13 @@ class _ChatScreenState extends State<AddScreen> {
                                 }
                               },
                               style:
-                                  const TextStyle(color: Colors.lightGreenAccent),
-                              controller: _nameController,
+                                  const TextStyle(color: Colors.black),
+                              controller: foundItemNameController,
                               keyboardType: TextInputType.name,
                               decoration: const InputDecoration(
                                 hintText: 'Enter Your Item Name',
                                 hintStyle: TextStyle(
-                                    color: Colors.redAccent, fontSize: 15),
+                                    color: Colors.black, fontSize: 15),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green),
                                 ),
@@ -231,17 +278,17 @@ class _ChatScreenState extends State<AddScreen> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'please valid value';
+                                   return 'please valid value';
                                 }
                               },
                               keyboardType: TextInputType.emailAddress,
-                              controller: _desingnationController,
+                              controller: foundItemCategoryController,
                               style: const TextStyle(
-                                  color: Colors.lightGreenAccent, fontSize: 15),
+                                  color: Colors.black, fontSize: 15),
                               decoration: const InputDecoration(
                                   hintText: 'Enter the item category',
                                   hintStyle:
-                                      TextStyle(color: Colors.red, fontSize: 15),
+                                      TextStyle(color: Colors.black, fontSize: 15),
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.green),
                                   ),
@@ -258,13 +305,13 @@ class _ChatScreenState extends State<AddScreen> {
                                 }
                               },
                               style:
-                                  const TextStyle(color: Colors.lightGreenAccent),
-                              controller: _nameController,
+                                  const TextStyle(color: Colors.black),
+                              controller: foundItemDescriptionController,
                               keyboardType: TextInputType.name,
                               decoration: const InputDecoration(
                                 hintText: 'Inter Description',
                                 hintStyle: TextStyle(
-                                    color: Colors.redAccent, fontSize: 15),
+                                    color: Colors.black, fontSize: 15),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green),
                                 ),
@@ -316,7 +363,11 @@ class _ChatScreenState extends State<AddScreen> {
                             ),
                             MaterialButton(
                               onPressed: () {
-                                _lostValidKey();
+                                if(foundKey.currentState!.validate()){
+                                  addFoundItem();
+                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>FoundScreen()));
+                                }
+
                               },
                               color: Colors.red,
                               child: const Padding(
@@ -351,29 +402,6 @@ class _ChatScreenState extends State<AddScreen> {
           ),
         ));
   }
-
-  late final TextEditingController _nameController = TextEditingController(text: '');
-
-// late TextEditingController _numberController = TextEditingController(text: '');
-  late final TextEditingController _desingnationController = TextEditingController(text: '');
-
-
-
-
-
-
-  // variabls
-  @override
-  void _lostValidKey() {
-    final isValid = lostKey.currentState!.validate();
-    print('valid $isValid');
-  }
-  void _foundValidKey() {
-    final isValid = foundKey.currentState!.validate();
-    print('valid $isValid');
-  }
-
-
   //image picker function
   final ImagePicker _picker = ImagePicker();
 
@@ -390,9 +418,10 @@ class _ChatScreenState extends State<AddScreen> {
     image = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {});
   }
-
   pickmultiImages() async {
     images = await _picker.pickMultiImage();
     setState(() {});
   }
 }
+
+

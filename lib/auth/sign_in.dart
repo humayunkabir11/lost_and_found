@@ -1,6 +1,8 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_and_found/auth/registration.dart';
+import 'package:lost_and_found/pages/add.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -14,6 +16,27 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
 
   late TextEditingController _emailController = TextEditingController(text: '');
   late TextEditingController _passWordController = TextEditingController(text: '');
+
+
+  signIn(email,pass) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: pass
+      );
+      var authCredential = credential.user;
+      if(authCredential!.uid.isNotEmpty){
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
 
   final globalKeyForm = GlobalKey<FormState>();
   bool _obscureText = true;
@@ -50,9 +73,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                     key: globalKeyForm,
                     child: Column(
                       children: [
-
-
-
+                        
                         const SizedBox(height: 7,),
                         TextFormField(
                           validator: (value){
@@ -62,10 +83,10 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                           },
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
-                          style:const TextStyle(color: Colors.lightGreenAccent,fontSize: 15),
+                          style:const TextStyle(color: Colors.black,fontSize: 15),
                           decoration: const InputDecoration(
                               hintText: 'Email',
-                              hintStyle: TextStyle(color: Colors.redAccent,fontSize: 15),
+                              hintStyle: TextStyle(color: Colors.black,fontSize: 15),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.green
@@ -83,13 +104,13 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                         TextFormField(
                           obscureText: _obscureText,
                           validator: (value){
-                            if(value!.isEmpty||value.length<10){
+                            if(value!.isEmpty||value.length<4){
                               return 'please valid value';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
                           controller: _passWordController,
-                          style:const TextStyle(color: Colors.lightGreenAccent,fontSize: 15),
+                          style:const TextStyle(color: Colors.black,fontSize: 15),
                           decoration: InputDecoration(
                               hintText: 'password',
                               suffixIcon: IconButton(onPressed: (){
@@ -98,7 +119,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                                 });
                               },
                                 icon: Icon(
-                                  _obscureText?Icons.visibility_off:Icons.visibility,color: Colors.green,
+                                  _obscureText?Icons.visibility_off:Icons.visibility,color: Colors.black,
                                 ),
                               ),
                               hintStyle: const TextStyle(color: Colors.red,fontSize: 15),
@@ -119,38 +140,29 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
 
                         const SizedBox(height: 20,),
                         MaterialButton(onPressed: (){
-
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>SignInPage()));
+                          signIn(_emailController, _passWordController );
+                          // Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
                           _formValidKey();
 
 
                         },
                           color: Colors.red,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(15.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.login,color: Colors.green,),
-                                const SizedBox(width: 6,),
-                                const Text('SignIn',style: TextStyle(color: Colors.green,fontSize: 15),)
+                                Icon(Icons.login,color: Colors.green,),
+                                SizedBox(width: 6,),
+                                Text('SignIn',style: TextStyle(color: Colors.green,fontSize: 15),)
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(height: 10,),
-                        RichText(
-                          text: const TextSpan(
-                              children: [
-                                TextSpan(text: "Don't Hava an Account?",style: TextStyle
-                                  (color: Colors.redAccent,fontWeight: FontWeight.bold,fontSize: 20),),
-                                TextSpan(text: 'Sign Up',style: TextStyle
-                                  (color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20)
-                                ),
-
-                              ]
-                          ),
-                        ),
+                       Text("Don't Have An Account"),
+                        TextButton(onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (_)=>SignInPage()));},
+                            child: Text("Sign up"))
                       ],
                     ),
                   ),
