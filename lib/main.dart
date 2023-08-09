@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:lost_and_found/bottom_nav_bar.dart';
+import 'package:lost_and_found/pages/bottom_nav_bar.dart';
 
 
 void main() async {

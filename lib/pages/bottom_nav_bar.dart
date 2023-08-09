@@ -15,7 +15,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
    final pages = [
-     LostScreen(),
+       LostScreen(),
       FoundScreen(),
       AddScreen(),
       ChatScreen(),
