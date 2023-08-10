@@ -9,23 +9,6 @@ class FoundScreen extends StatefulWidget {
 
 class _FoundScreenState extends State<FoundScreen> {
 
-  List<Map<String, String>> foundList = [
-    {
-      "productName" : "MoneyBag",
-      "location" : "Mirpur-10",
-      "description" : "Lather",
-
-      "image" : "assets/images/"
-    },
-    {
-      "productName" : "Bag",
-      "location" : "Mirpur-14",
-      "description" : "Lather",
-
-      "image" : "assets/images/"
-    }
-  ];
-
   @override
   Widget build(BuildContext context) {
     return  SafeArea(

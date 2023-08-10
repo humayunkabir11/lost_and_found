@@ -26,7 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
 
         endDrawer:  Drawer(
-
           elevation: 2,
           width: 220,
           backgroundColor: Colors.grey,

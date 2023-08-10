@@ -15,16 +15,13 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
    final pages = [
-       LostScreen(),
+      LostScreen(),
       FoundScreen(),
       AddScreen(),
       ChatScreen(),
       ProfileScreen()
-
   ];
-
   int _currentIndex = 2;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +41,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
           items: const [
             BottomNavigationBarItem(
-
                 icon: Icon(
                   Icons.menu,
                 ),
