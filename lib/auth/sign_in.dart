@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_and_found/auth/registration.dart';
 import 'package:lost_and_found/pages/add.dart';
+import 'package:lost_and_found/pages/bottom_nav_bar.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
       );
       var authCredential = credential.user;
       if(authCredential!.uid.isNotEmpty){
-        Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> BottomNavBar()));
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -77,7 +78,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                         const SizedBox(height: 7,),
                         TextFormField(
                           validator: (value){
-                            if(value!.isEmpty||value.contains('@')){
+                            if(value!.isEmpty){
                               return 'please valid value';
                             }
                           },
@@ -140,11 +141,9 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
 
                         const SizedBox(height: 20,),
                         MaterialButton(onPressed: (){
-                          signIn(_emailController, _passWordController );
+                          signIn(_emailController.text, _passWordController.text );
                           // Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
                           _formValidKey();
-
-
                         },
                           color: Colors.red,
                           child: const Padding(

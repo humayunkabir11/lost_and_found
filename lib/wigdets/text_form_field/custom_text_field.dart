@@ -24,7 +24,6 @@ class CustomTextField extends StatelessWidget {
   });
 
 
-
   final bool ?isPassword;
   final bool ?isPrefixIcon;
   final bool ?showCursor;
@@ -76,22 +75,22 @@ class CustomTextField extends StatelessWidget {
         hintText: hintText,
         hintStyle: TextStyle(),
 
-        // border: OutlineInputBorder(
-        //   borderSide: BorderSide(color: Colors.red,width: 5),
-        //   borderRadius: BorderRadius.all(Radius.circular(50)),
-        // ),
+        border: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red,width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
 
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey,),
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
 
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
           borderSide: BorderSide(color: Colors.grey),
         ),
 
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
           borderSide: BorderSide(color: Colors.red),
         ),

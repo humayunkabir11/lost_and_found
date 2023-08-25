@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_and_found/auth/sign_in.dart';
+import 'package:lost_and_found/model/user_model.dart';
 import 'package:lost_and_found/pages/chat_screen.dart';
 import 'package:lost_and_found/pages/itemscreen.dart';
 
@@ -14,36 +17,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+
+
+  final auth = FirebaseAuth.instance;
+  final fireStore = FirebaseFirestore.instance;
+
+  UserModel currentUser = UserModel();
+
+  bool isLoading = false;
+
+  Future<void> getUserInfo() async {
+
+    setState(() {
+      isLoading = true;
+    });
+
+    User? user = auth.currentUser;
+
+    if(currentUser != null){
+
+      await fireStore.collection("users").doc(user!.uid).get().then((value) {
+        currentUser = UserModel.fromMap(value.data());
+      });
+    }
+    else{
+      print("No user found");
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void accountLogout() async{
+    await auth.signOut();
+  }
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           title: const Text("Profile"),
-
         ),
-
         endDrawer:  Drawer(
           elevation: 2,
           width: 220,
           backgroundColor: Colors.grey,
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                Text("LOST AND FOUND",style: TextStyle(color: Colors.indigoAccent ,fontSize: 30,fontWeight: FontWeight.bold),),
-                SizedBox(height: 20,),
+                const Text("LOST AND FOUND",style: TextStyle(color: Colors.indigoAccent ,fontSize: 30,fontWeight: FontWeight.bold),),
+                const SizedBox(height: 20,),
                 SizedBox(
                   height: 70,
                   child: InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>const ProfileScreen()));
                     },
-                    child: Card(
+                    child: const Card(
                       elevation: 10,
                       shadowColor: Colors.black,
                       child:  Row(
@@ -62,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>MyItems()));
                     },
-                    child: Card(
+                    child: const Card(
                       elevation: 10,
                       shadowColor: Colors.black,
                       child:  Row(
@@ -81,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen()));
                     },
-                    child: Card(
+                    child: const Card(
                       elevation: 10,
                       shadowColor: Colors.black,
                       child:  Row(
@@ -97,10 +139,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(
                   height: 70,
                   child: InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (_)=>LogIn()));
+                    onTap: () {
+                      accountLogout();
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const LogIn()));
                     },
-                    child: Card(
+                    child: const Card(
                       elevation: 10,
                       shadowColor: Colors.black,
 
@@ -119,12 +162,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
 
         ),
+        body: isLoading ? const Center(
+          child: CircularProgressIndicator(color: Colors.blue, strokeWidth: 4),
+        ) : SingleChildScrollView(
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 100, width: 100,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: currentUser.imageSrc == null ? const AssetImage("images/img.png") : NetworkImage(currentUser.imageSrc.toString()) as ImageProvider,
+                            fit: BoxFit.cover
+                        )
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          currentUser.name ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(currentUser.email ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
+                      const SizedBox(height: 8,),
+                      Text(currentUser.address?? ""),
+                      Text(currentUser.phoneNumber ?? "",),
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
-
-
-
-
   }
 }
 

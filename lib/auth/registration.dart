@@ -2,10 +2,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lost_and_found/auth/sign_in.dart';
+import 'package:lost_and_found/model/user_model.dart';
 import 'package:lost_and_found/pages/add.dart';
+import 'package:lost_and_found/pages/bottom_nav_bar.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -21,6 +24,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passWordController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+
+
 
   final auth = FirebaseAuth.instance;
 
@@ -51,45 +56,57 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     userModel.phoneNumber = _numberController.text.toString();
     userModel.address = _addressController.text.toString();
 
-    await firebaseFireStore.collection("users")
-        .doc(user.uid)
-        .set(userModel.toMap());
+    if (imageFile != null) {
+      Reference storageReference = FirebaseStorage.instance.ref().child('profile_images/${user!.uid}');
+      TaskSnapshot uploadTask = await storageReference.putFile(File(imageFile!.path));
+      imageUrl = await uploadTask.ref.getDownloadURL();
+    }
+
+    userModel.imageSrc = imageUrl;
+
+    await firebaseFireStore.collection("users").doc(user.uid).set(userModel.toMap());
 
     Navigator.push(context, MaterialPageRoute(builder: (_) => AddScreen()));
+
   }
 
   final globalKeyForm = GlobalKey<FormState>();
   bool _obscureText = true;
-  final ImagePicker _picker = ImagePicker();
 
-  XFile? image;
+  File? imageFile;
+  final imagePicker = ImagePicker();
+  String? imageUrl;
 
-  List<XFile>? images;
+  void openGallery(BuildContext context) async{
 
-  fromCamera() async {
-    image = await _picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 120,
+        maxWidth: 120
+    );
+
     setState(() {
-
+      if(pickedFile != null)
+      {
+        imageFile = File(pickedFile.path);
+      }
     });
   }
 
-  fromgellry() async {
-    image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {});
-  }
+  void openCamera(BuildContext context)  async{
 
-  pickmultiImages() async {
-    images = await _picker.pickMultiImage();
+    final pickedFile = await ImagePicker().pickImage(
+
+        source: ImageSource.camera,
+        maxHeight: 120,
+        maxWidth: 120
+    );
     setState(() {
 
-    });
-
-  }
-
-
-  fromGellary () async {
-    image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
+      if(pickedFile != null)
+      {
+        imageFile = File(pickedFile.path);
+      }
     });
   }
 
@@ -262,28 +279,30 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                           ),
                         ),
                         const SizedBox(height: 20,),
-                        image ==null?
+                        imageFile == null ?
                             Container(
-                              child: Center(child: Text("upload picture")),
                               height: 100,
                               width: 100,
                               decoration: BoxDecoration(
                                 color: Colors.green,
                                 borderRadius: BorderRadius.circular(20)
                               ),
+                              child: const Center(child: Text("upload picture")),
                             ):
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child:Image.file(File(image!.path),height: 80,width: 80,)
+                          child:Image.file(File(imageFile!.path),height: 80,width: 80,)
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(onPressed: ()=>fromCamera(), icon: Icon(Icons.camera)),
-                            SizedBox(width: 20,),
-                            IconButton(onPressed: ()=>fromCamera(), icon: Icon(Icons.photo_album_outlined))
-                          ],),
+                            IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera)),
+                            const SizedBox(width: 20,),
+                            IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined))
+                          ],
+                        ),
                         MaterialButton(onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const BottomNavBar()));
                           registerUser(email: _emailController.text, password: _passWordController.text);
 
                         },
@@ -324,40 +343,5 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   }
 }
 
-class UserModel{
 
-  String? uid;
-  String? name;
-  String? phoneNumber;
-  String? email;
-  String? address;
-
-  UserModel({this.uid, this.name, this.phoneNumber, this.email, this.address});
-
-  // receive data from server
-  factory UserModel.fromMap(map)
-  {
-    return UserModel(
-
-        uid: map['uid'],
-        name: map['name'],
-        phoneNumber: map['phoneNumber'],
-        email: map['email'],
-        address: map['address']
-    );
-  }
-
-  // sending data to server
-  Map<String, dynamic> toMap()
-  {
-    return {
-
-      'uid': uid,
-      'name': name,
-      'phoneNumber': phoneNumber,
-      'email': email,
-      'address': address,
-    };
-  }
-}
 

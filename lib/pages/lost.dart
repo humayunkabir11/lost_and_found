@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:lost_and_found/model/lost_item_model.dart';
 
 class LostScreen extends StatefulWidget {
   const LostScreen({super.key});
@@ -10,49 +11,84 @@ class LostScreen extends StatefulWidget {
 }
 
 class _LostScreenState extends State<LostScreen> {
-  final Stream<QuerySnapshot> lost_itemStream = FirebaseFirestore.instance.collection('lost_item').snapshots();
 
-  final ImagePicker _picker = ImagePicker();
+  final auth = FirebaseAuth.instance;
+  final fireStore  =  FirebaseFirestore.instance;
 
 
-  XFile? image;
-  List<XFile>? images;
+  LostItemModel currentUser = LostItemModel();
+  bool isLoading = false;
 
-  fromGallery() async {
-    image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {});
+  Future<void> getUserInfo() async {
+
+    setState(() {
+      isLoading = true;
+    });
+
+    User? user = auth.currentUser;
+
+    if(currentUser != null){
+
+      await fireStore.collection("Lost_item").doc(user!.uid).get().then((value) {
+        currentUser = LostItemModel.fromMap(value.data());
+      });
+    }
+    else{
+      print("No user found");
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
-
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        stream: lost_itemStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Something went wrong');
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
-          }
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-
-                  Text(data['item_name']),
-                  SizedBox(height: 10,),
-                  Text(data['item_category']),
-
-                ],
-              );
-            }).toList(),
-          );
-        },
-      )
+      body: isLoading ? const Center(
+        child: CircularProgressIndicator(color: Colors.blue, strokeWidth: 4),
+      ) : SingleChildScrollView(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 24),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 100, width: 100,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: currentUser.LostimageUrls == null ? const AssetImage("images/img.png") : NetworkImage(currentUser.LostimageUrls.toString()) as ImageProvider,
+                          fit: BoxFit.cover
+                      )
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      currentUser.itemName ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(currentUser.itemCategory ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
+                    const SizedBox(height: 8,),
+                    Text(currentUser.lostDate?? ""),
+                    Text(currentUser.itemDescription ?? "",),
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
