@@ -5,7 +5,6 @@ import 'package:lost_and_found/model/found_item_model.dart';
 
 class FoundScreen extends StatefulWidget {
   const FoundScreen({super.key});
-
   @override
   State<FoundScreen> createState() => _LostScreenState();
 }
@@ -19,7 +18,7 @@ class _LostScreenState extends State<FoundScreen> {
   FoundItemModel currentUser = FoundItemModel();
   bool isLoading = false;
 
-  Future<void> getUserInfo() async {
+  Future<void> getFoundUserInfo() async {
 
     setState(() {
       isLoading = true;
@@ -29,7 +28,7 @@ class _LostScreenState extends State<FoundScreen> {
 
     if(currentUser != null){
 
-      await fireStore.collection("Lost_item").doc(user!.uid).get().then((value) {
+      await fireStore.collection("Found_item").doc(user!.uid).get().then((value) {
         currentUser = FoundItemModel.fromMap(value.data());
       });
     }
@@ -43,7 +42,7 @@ class _LostScreenState extends State<FoundScreen> {
   }
   @override
   void initState() {
-    getUserInfo();
+    getFoundUserInfo();
     super.initState();
   }
 
@@ -76,10 +75,10 @@ class _LostScreenState extends State<FoundScreen> {
                   children: [
 
                     Text(
-                      currentUser.founditemName ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
+                      currentUser.founditemName ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),
                     ),
                     const SizedBox(height: 8),
-                    Text(currentUser.foundItemCategory ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
+                    Text(currentUser.foundItemCategory ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),),
                     const SizedBox(height: 8,),
                     // Text(currentUser.lostDate?? ""),
                     Text(currentUser.foundItemDescription ?? "",),

@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lost_and_found/model/found_item_model.dart';
-import 'package:lost_and_found/model/lost_item_model.dart';
 import 'package:lost_and_found/pages/add/add_screen.dart';
 import 'package:lost_and_found/pages/lost_ screen.dart';
 
@@ -19,7 +18,7 @@ class FoundItem extends StatefulWidget {
 
 class _LostItemState extends State<FoundItem> {
 
-  final lostKey = GlobalKey<FormState>();
+  final foundKey = GlobalKey<FormState>();
 
   final TextEditingController lostItemNameController = TextEditingController();
   final TextEditingController lostItemCategoryController = TextEditingController();
@@ -31,7 +30,7 @@ class _LostItemState extends State<FoundItem> {
     FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
     User? user = auth.currentUser;
     FoundItemModel foundItemModel = FoundItemModel();
-    if(lostKey.currentState!.validate()){
+    if(foundKey.currentState!.validate()){
       foundItemModel.founditemName = lostItemNameController.text.toString();
       foundItemModel.foundItemCategory = lostItemCategoryController.text.toString();
       foundItemModel.foundImageUrls = lostItemDescriptionController.text.toString();
@@ -95,7 +94,7 @@ class _LostItemState extends State<FoundItem> {
           height: 20,
         ),
         const Text(
-          "Lost Dashborad",
+          "Found Dashboard",
           style: TextStyle(
             color: Colors.green,
             fontSize: 20,
@@ -104,7 +103,7 @@ class _LostItemState extends State<FoundItem> {
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20),
           child: Form(
-            key: lostKey,
+            key: foundKey,
             child: Column(
               children: [
                 TextFormField(
@@ -202,14 +201,14 @@ class _LostItemState extends State<FoundItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera)),
+                    IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera,color: Colors.green,)),
                     const SizedBox(width: 20,),
-                    IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined))
+                    IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined,color: Colors.green,))
                   ],
                 ),
                 MaterialButton(
                   onPressed: () async {
-                    if(lostKey.currentState!.validate()){
+                    if(foundKey.currentState!.validate()){
 
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>  const LostScreen() ));
 

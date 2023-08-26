@@ -92,8 +92,6 @@ class _LostItemState extends State<LostItem> {
     });
   }
 
-
-  
   @override
   Widget build(BuildContext context) {
     return  Column(
@@ -102,7 +100,7 @@ class _LostItemState extends State<LostItem> {
           height: 20,
         ),
         const Text(
-          "Lost Dashborad",
+          "Lost Dashboard",
           style: TextStyle(
             color: Colors.green,
             fontSize: 20,
@@ -209,9 +207,9 @@ class _LostItemState extends State<LostItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera)),
+                    IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera,color: Colors.green,)),
                     const SizedBox(width: 20,),
-                    IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined))
+                    IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined,color: Colors.green,))
                   ],
                 ),
                 MaterialButton(

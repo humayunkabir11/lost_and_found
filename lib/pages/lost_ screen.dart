@@ -83,6 +83,7 @@ class _LostScreenState extends State<LostScreen> {
                     const SizedBox(height: 8,),
                     // Text(currentUser.lostDate?? ""),
                     Text(currentUser.lostIemDescription ?? "",),
+
                   ],
                 )
               ],
