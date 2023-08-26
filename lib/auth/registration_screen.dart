@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lost_and_found/model/user_model.dart';
 import 'package:lost_and_found/pages/add/add_screen.dart';
@@ -64,6 +65,15 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     await firebaseFireStore.collection("users").doc(user.uid).set(userModel.toMap());
 
     Navigator.push(context, MaterialPageRoute(builder: (_) => const AddScreen()));
+
+    Fluttertoast.showToast(
+        msg: "Account created successfully",
+        backgroundColor: Colors.green,
+        textColor:Colors.black,
+        fontSize: 14,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM
+    );
 
   }
 
@@ -131,7 +141,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         TextFormField(
                           validator: (value){
                             if(value!.isEmpty){
-                              return 'please give right input';
+                              return 'please give input';
                             }
                           },
                           style: const TextStyle(color: Colors.black),
@@ -155,7 +165,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         TextFormField(
                           validator: (value){
                             if(value!.isEmpty){
-                              return 'please give right input';
+                              return 'please give input';
                             }
                           },
                           style: const TextStyle(color: Colors.black),
@@ -243,7 +253,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         TextFormField(
                           validator: (value){
                             if(value!.isEmpty){
-                              return 'please valid value';
+                              return 'please input value';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
@@ -268,6 +278,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         const SizedBox(height: 20,),
                         imageFile == null ?
                             Container(
+                            alignment: Alignment.center,
                               height: 100,
                               width: 100,
                               decoration: BoxDecoration(

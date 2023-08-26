@@ -1,6 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lost_and_found/auth/registration_screen.dart';
 import 'package:lost_and_found/pages/add/add_screen.dart';
 
@@ -27,6 +28,8 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
       var authCredential = credential.user;
       if(authCredential!.uid.isNotEmpty){
         Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
+
+
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

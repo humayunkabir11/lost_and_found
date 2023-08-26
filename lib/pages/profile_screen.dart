@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_and_found/auth/signin_screen.dart';
-import 'package:lost_and_found/message/message/message_screen.dart';
 import 'package:lost_and_found/model/user_model.dart';
+import 'package:lost_and_found/pages/message/message/message_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -164,9 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        currentUser.name ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),
-                      ),
+                      Text(currentUser.name ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),),
                       const SizedBox(height: 8),
                       Text(currentUser.email ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),),
                       const SizedBox(height: 8,),

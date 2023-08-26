@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lost_and_found/message/message/message_screen.dart';
 import 'package:lost_and_found/pages/add/add_screen.dart';
 import 'package:lost_and_found/pages/found_screen.dart';
 import 'package:lost_and_found/pages/lost_ screen.dart';
+import 'package:lost_and_found/pages/message/message/message_screen.dart';
 import 'package:lost_and_found/pages/profile_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
