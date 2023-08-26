@@ -74,14 +74,15 @@ class _LostScreenState extends State<LostScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     Text(
-                      currentUser.itemName ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
+                      currentUser.lostItemName ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
                     ),
                     const SizedBox(height: 8),
-                    Text(currentUser.itemCategory ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
+                    Text(currentUser.lostItemCategory ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
                     const SizedBox(height: 8,),
-                    Text(currentUser.lostDate?? ""),
-                    Text(currentUser.itemDescription ?? "",),
+                    // Text(currentUser.lostDate?? ""),
+                    Text(currentUser.lostIemDescription ?? "",),
                   ],
                 )
               ],
@@ -92,6 +93,3 @@ class _LostScreenState extends State<LostScreen> {
     );
   }
 }
-
-
-

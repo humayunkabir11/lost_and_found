@@ -4,10 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lost_and_found/model/user_model.dart';
-import 'package:lost_and_found/pages/add.dart';
+import 'package:lost_and_found/pages/add/add_screen.dart';
 import 'package:lost_and_found/pages/bottom_nav_bar.dart';
 
 class SignInPage extends StatefulWidget {
@@ -24,8 +23,6 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passWordController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-
-
 
   final auth = FirebaseAuth.instance;
 
@@ -66,11 +63,12 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
     await firebaseFireStore.collection("users").doc(user.uid).set(userModel.toMap());
 
-    Navigator.push(context, MaterialPageRoute(builder: (_) => AddScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const AddScreen()));
 
   }
 
   final globalKeyForm = GlobalKey<FormState>();
+
   bool _obscureText = true;
 
   File? imageFile;
@@ -96,7 +94,6 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   void openCamera(BuildContext context)  async{
 
     final pickedFile = await ImagePicker().pickImage(
-
         source: ImageSource.camera,
         maxHeight: 120,
         maxWidth: 120
@@ -124,18 +121,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
               child: ListView(
                 children: [
                   SizedBox(height: size.height*0.1,),
-                  RichText(
-                    text: const TextSpan(
-                        children: [
-                          TextSpan(text: 'Please Fill-Up the ',style: TextStyle
-                            (color: Colors.redAccent,fontWeight: FontWeight.bold,fontSize: 20),),
-                          TextSpan(text: 'Form',style: TextStyle
-                            (color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20)
-                          ),
-
-                        ]
-                    ),
-                  ),
+              const Text("Registration Here",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+                  const Divider(height: 2,color: Colors.grey,),
                   const SizedBox(height: 7,),
                   Form(
                     key: globalKeyForm,
@@ -220,7 +207,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         TextFormField(
                           obscureText: _obscureText,
                           validator: (value){
-                            if(value!.isEmpty||value.length<6){
+                            if(value!.isEmpty || value.length<4){
                               return 'please valid value';
                             }
                           },
@@ -296,9 +283,9 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera)),
+                            IconButton(onPressed: ()=>openCamera(context), icon: const Icon(Icons.camera,color: Colors.green,)),
                             const SizedBox(width: 20,),
-                            IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined))
+                            IconButton(onPressed: ()=>openGallery(context), icon: const Icon(Icons.photo_album_outlined,color: Colors.green,))
                           ],
                         ),
                         MaterialButton(onPressed: (){

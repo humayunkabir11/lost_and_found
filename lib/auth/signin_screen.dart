@@ -1,9 +1,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lost_and_found/auth/registration.dart';
-import 'package:lost_and_found/pages/add.dart';
-import 'package:lost_and_found/pages/bottom_nav_bar.dart';
+import 'package:lost_and_found/auth/registration_screen.dart';
+import 'package:lost_and_found/pages/add/add_screen.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -27,7 +26,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
       );
       var authCredential = credential.user;
       if(authCredential!.uid.isNotEmpty){
-        Navigator.push(context, MaterialPageRoute(builder: (_)=> BottomNavBar()));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -78,8 +77,8 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                         const SizedBox(height: 7,),
                         TextFormField(
                           validator: (value){
-                            if(value!.isEmpty){
-                              return 'please valid value';
+                            if(value!.isEmpty||value.contains('@')){
+                              return 'email not match';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
@@ -106,7 +105,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                           obscureText: _obscureText,
                           validator: (value){
                             if(value!.isEmpty||value.length<4){
-                              return 'please valid value';
+                              return 'password not match';
                             }
                           },
                           keyboardType: TextInputType.emailAddress,
@@ -123,7 +122,7 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                                   _obscureText?Icons.visibility_off:Icons.visibility,color: Colors.black,
                                 ),
                               ),
-                              hintStyle: const TextStyle(color: Colors.red,fontSize: 15),
+                              hintStyle: const TextStyle(color: Colors.black,fontSize: 15),
                               enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.green
@@ -141,9 +140,11 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
 
                         const SizedBox(height: 20,),
                         MaterialButton(onPressed: (){
-                          signIn(_emailController.text, _passWordController.text );
+                          signIn(_emailController, _passWordController );
                           // Navigator.push(context, MaterialPageRoute(builder: (_)=>AddScreen()));
                           _formValidKey();
+
+
                         },
                           color: Colors.red,
                           child: const Padding(
@@ -159,9 +160,9 @@ class _SignInPageState extends State<LogIn> with SingleTickerProviderStateMixin{
                           ),
                         ),
                         const SizedBox(height: 10,),
-                       Text("Don't Have An Account"),
+                       const Text("Don't Have An Account",style: TextStyle(color: Colors.black,fontSize: 14,),),
                         TextButton(onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (_)=>SignInPage()));},
-                            child: Text("Sign up"))
+                            child: const Text("Sign up"))
                       ],
                     ),
                   ),

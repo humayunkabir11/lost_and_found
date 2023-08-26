@@ -5,21 +5,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lost_and_found/model/found_item_model.dart';
 import 'package:lost_and_found/model/lost_item_model.dart';
-import 'package:lost_and_found/pages/add.dart';
-import 'package:lost_and_found/pages/lost.dart';
+import 'package:lost_and_found/pages/add/add_screen.dart';
+import 'package:lost_and_found/pages/lost_ screen.dart';
 
-class LostItem extends StatefulWidget {
-  const LostItem({super.key});
+class FoundItem extends StatefulWidget {
+  const FoundItem({super.key});
 
   @override
-  State<LostItem> createState() => _LostItemState();
+  State<FoundItem> createState() => _LostItemState();
 }
 
-class _LostItemState extends State<LostItem> {
-  
+class _LostItemState extends State<FoundItem> {
+
   final lostKey = GlobalKey<FormState>();
-  
+
   final TextEditingController lostItemNameController = TextEditingController();
   final TextEditingController lostItemCategoryController = TextEditingController();
   final TextEditingController lostItemDescriptionController = TextEditingController();
@@ -27,28 +28,23 @@ class _LostItemState extends State<LostItem> {
   final auth = FirebaseAuth.instance;
 
   postDetailsToFireStore() async{
-
     FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
-
     User? user = auth.currentUser;
-    LostItemModel lostItemModel = LostItemModel();
-
-
+    FoundItemModel foundItemModel = FoundItemModel();
     if(lostKey.currentState!.validate()){
-
-      lostItemModel.itemName = lostItemNameController.text.toString();
-      lostItemModel.itemCategory = lostItemCategoryController.text.toString();
-      lostItemModel.itemDescription = lostItemDescriptionController.text.toString();
+      foundItemModel.founditemName = lostItemNameController.text.toString();
+      foundItemModel.foundItemCategory = lostItemCategoryController.text.toString();
+      foundItemModel.foundImageUrls = lostItemDescriptionController.text.toString();
 
       if (imageFile != null) {
-        Reference storageReference = FirebaseStorage.instance.ref().child('profile_images/${user!.uid}');
+        Reference storageReference = FirebaseStorage.instance.ref().child('found_images/${user!.uid}');
         TaskSnapshot uploadTask = await storageReference.putFile(File(imageFile!.path));
         imageUrl = await uploadTask.ref.getDownloadURL();
       }
 
-      lostItemModel.LostimageUrls = imageUrl;
+    foundItemModel.foundImageUrls = imageUrl;
 
-      await firebaseFireStore.collection("users").doc(user?.uid).set(lostItemModel.toMap());
+      await firebaseFireStore.collection("users").doc(user?.uid).set(foundItemModel.toMap());
 
       Navigator.push(context, MaterialPageRoute(builder: (_) => AddScreen()));
     }
@@ -91,9 +87,6 @@ class _LostItemState extends State<LostItem> {
       }
     });
   }
-
-
-  
   @override
   Widget build(BuildContext context) {
     return  Column(
@@ -217,7 +210,7 @@ class _LostItemState extends State<LostItem> {
                 MaterialButton(
                   onPressed: () async {
                     if(lostKey.currentState!.validate()){
-                      
+
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>  const LostScreen() ));
 
                     }

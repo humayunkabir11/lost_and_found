@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lost_and_found/auth/sign_in.dart';
+import 'package:lost_and_found/auth/signin_screen.dart';
+import 'package:lost_and_found/message/message/message_screen.dart';
 import 'package:lost_and_found/model/user_model.dart';
-import 'package:lost_and_found/pages/chat_screen.dart';
-import 'package:lost_and_found/pages/itemscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,8 +15,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-
 
   final auth = FirebaseAuth.instance;
   final fireStore = FirebaseFirestore.instance;
@@ -31,7 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       isLoading = true;
     });
-
     User? user = auth.currentUser;
 
     if(currentUser != null){
@@ -62,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         key: scaffoldKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -102,26 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 70,
                   child: InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (_)=>MyItems()));
-                    },
-                    child: const Card(
-                      elevation: 10,
-                      shadowColor: Colors.black,
-                      child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(Icons.interpreter_mode_sharp),
-                          Text("My Items")
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 70,
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_)=>MessageScreen()));
                     },
                     child: const Card(
                       elevation: 10,
@@ -187,10 +165,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          currentUser.name ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),
+                        currentUser.name ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),
                       ),
                       const SizedBox(height: 8),
-                      Text(currentUser.email ?? "",style: TextStyle(color: Colors.blue,fontSize: 18),),
+                      Text(currentUser.email ?? "",style: const TextStyle(color: Colors.blue,fontSize: 18),),
                       const SizedBox(height: 8,),
                       Text(currentUser.address?? ""),
                       Text(currentUser.phoneNumber ?? "",),
@@ -205,4 +183,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-

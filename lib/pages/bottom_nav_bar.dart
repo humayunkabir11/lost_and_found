@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lost_and_found/pages/add.dart';
-import 'package:lost_and_found/pages/chat_screen.dart';
-import 'package:lost_and_found/pages/found.dart';
-import 'package:lost_and_found/pages/lost.dart';
-import 'package:lost_and_found/pages/profile.dart';
+import 'package:lost_and_found/message/message/message_screen.dart';
+import 'package:lost_and_found/pages/add/add_screen.dart';
+import 'package:lost_and_found/pages/found_screen.dart';
+import 'package:lost_and_found/pages/lost_ screen.dart';
+import 'package:lost_and_found/pages/profile_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -15,11 +15,11 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
    final pages = [
-      LostScreen(),
-      FoundScreen(),
+         LostScreen(),
+      const FoundScreen(),
       AddScreen(),
-      ChatScreen(),
-      ProfileScreen()
+      MessageScreen(),
+       ProfileScreen()
   ];
   int _currentIndex = 2;
   @override

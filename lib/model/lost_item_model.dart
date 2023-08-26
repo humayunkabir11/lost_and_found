@@ -1,21 +1,16 @@
 
 class LostItemModel{
 
-  String? itemName;
-  String? itemCategory;
-  String? itemDescription;
+  String? lostItemName;
+  String? lostItemCategory;
+  String? lostIemDescription;
   String ?lostDate;
   String ? LostimageUrls;
 
-
-
-
-
-
   LostItemModel({
-    this.itemName,
-    this.itemCategory,
-    this.itemDescription,
+    this.lostItemName,
+    this.lostItemCategory,
+    this.lostIemDescription,
     this.lostDate,
     this.LostimageUrls,
 
@@ -25,9 +20,9 @@ class LostItemModel{
   factory LostItemModel.fromMap(map) {
 
     return LostItemModel(
-      itemName: map['itemName'],
-      itemCategory: map['itemCategory'],
-      itemDescription: map['itemDescription'],
+      lostItemName: map['lostItemName'],
+      lostItemCategory: map['lostItemCategory'],
+      lostIemDescription: map['lostIemDescription'],
       lostDate: map['lostDate'],
       LostimageUrls: map['LostimageUrls'],
     );
@@ -36,11 +31,11 @@ class LostItemModel{
   // sending data to server
   Map<String, dynamic> toMap() {
     return {
-      'itemName': itemName,
-      'itemCategory': itemCategory,
-      'itemDescription': itemDescription,
+      'lostItemName': lostItemName,
+      'lostItemCategory': lostItemCategory,
+      'lostIemDescription': lostIemDescription,
       'lostDate': lostDate,
-      'imageUrls': LostimageUrls,
+      'LostimageUrls': LostimageUrls,
 
     };
   }

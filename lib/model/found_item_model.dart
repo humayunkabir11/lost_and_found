@@ -1,40 +1,36 @@
+class FoundItemModel {
+  String? founditemName;
+  String? foundItemCategory;
+  String? foundItemDescription;
+  String? foundImageUrls;
+  String? foundDate;
 
-class FoundItemModel{
-  String? itemName;
-  String? itemCategory;
-  String? itemDescription;
-  List<String>? imageUrls;
-  String ?lostDate;
-
-  FoundItemModel
-({
-    this.itemName,
-    this.itemCategory,
-    this.itemDescription,
-    this.imageUrls,
-    this.lostDate
-  });
+  FoundItemModel(
+      {this.founditemName,
+      this.foundItemCategory,
+      this.foundItemDescription,
+      this.foundImageUrls,
+      this.foundDate});
 
   // receive data from server
   factory FoundItemModel.fromMap(map) {
-    return FoundItemModel
-(
-      itemName: map['itemName'],
-      itemCategory: map['itemCategory'],
-      itemDescription: map['itemDescription'],
-      imageUrls: map['imageUrls'],
-      lostDate: map['lostDate'],
+    return FoundItemModel(
+      founditemName: map['founditemName'],
+      foundItemCategory: map['foundItemCategory'],
+      foundItemDescription: map['foundItemDescription'],
+      foundImageUrls: map['foundImageUrls'],
+      foundDate: map['foundDate'],
     );
   }
 
   // sending data to server
   Map<String, dynamic> toMap() {
     return {
-      'itemName': itemName,
-      'itemCategory': itemCategory,
-      'itemDescription': itemDescription,
-      'imageUrls': imageUrls,
-      'lostDate': imageUrls,
+      'founditemName': founditemName,
+      'foundItemCategory': foundItemCategory,
+      'foundItemDescription': foundItemDescription,
+      'foundImageUrls': foundImageUrls,
+      'foundDate': foundDate,
     };
   }
 }
